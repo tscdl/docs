@@ -1,0 +1,343 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "(title)",
+    "version": "0.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/api/execution/node": {
+      "post": {
+        "operationId": "Execution_executeNode",
+        "description": "Execute a single node",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/App.Graph.XY3.XY3NodeExecutionResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/App.Graph.XY3.XY3NodeExecutionRequest"
+              }
+            }
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Execute Node",
+            "description": "Execute a single node with the provided request"
+          }
+        }
+      }
+    },
+    "/apps/prompts/x": {
+      "get": {
+        "operationId": "TestPromptingo_xyzDoWhatPrompts",
+        "description": "Test endpoint returning prompt containers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/App.CommonTypes.PromptContainer.XY3PromptContainer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Xyz Do What Prompts",
+            "description": "Test endpoint returning prompt containers"
+          }
+        }
+      }
+    },
+    "/healthhhhhh/": {
+      "get": {
+        "operationId": "Health_checkHealth",
+        "description": "Health check endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseTypes.HealthResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-mint": {
+          "metadata": {
+            "title": "Health Check extension(x-mint) and should be used for all health check endpoints",
+            "description": "Check API health status",
+            "og:title": "Check API health status",
+            "content": "## Requires admin privileges and has rate limiting.\n\n<Note>User emails must be unique across the system.</Note>"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "App.CommonTypes.PromptContainer.XY3PromptApplicationMode": {
+        "type": "string",
+        "enum": [
+          "foundation",
+          "append",
+          "override",
+          "reset"
+        ]
+      },
+      "App.CommonTypes.PromptContainer.XY3PromptAuthorityLevel": {
+        "type": "string",
+        "enum": [
+          "system",
+          "developer",
+          "user",
+          "assistant"
+        ]
+      },
+      "App.CommonTypes.PromptContainer.XY3PromptContainer": {
+        "type": "object",
+        "required": [
+          "applicationMode",
+          "authorityLevel",
+          "content"
+        ],
+        "properties": {
+          "applicationMode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/App.CommonTypes.PromptContainer.XY3PromptApplicationMode"
+              }
+            ],
+            "default": "foundation"
+          },
+          "authorityLevel": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/App.CommonTypes.PromptContainer.XY3PromptAuthorityLevel"
+              }
+            ],
+            "default": "system"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "App.Graph.XY3.XY3NodeExecutionRequest": {
+        "type": "object",
+        "required": [
+          "nodeId",
+          "appId",
+          "context"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "string"
+          },
+          "appId": {
+            "type": "string"
+          },
+          "parameterOverrides": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "context": {
+            "$ref": "#/components/schemas/App.Graph.XY3NodeExecutionContext"
+          }
+        }
+      },
+      "App.Graph.XY3.XY3NodeExecutionResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/App.Graph.XY3NodeExecutionResult"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/App.Graph.XY3ApiResponseMeta"
+          }
+        }
+      },
+      "App.Graph.XY3ApiResponseMeta": {
+        "type": "object",
+        "required": [
+          "system"
+        ],
+        "properties": {
+          "system": {
+            "type": "string",
+            "enum": [
+              "XY3"
+            ]
+          },
+          "exportType": {
+            "$ref": "#/components/schemas/App.Graph.XY3ExportType"
+          },
+          "dateLoadedAt": {
+            "type": "string"
+          },
+          "dateExecutedAt": {
+            "type": "string"
+          },
+          "dateQueriedAt": {
+            "type": "string"
+          },
+          "resolutionStats": {
+            "$ref": "#/components/schemas/App.Graph.XY3NodeResolutionStats"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "App.Graph.XY3ExportType": {
+        "type": "string",
+        "enum": [
+          "runtime",
+          "ui",
+          "execution",
+          "registry"
+        ]
+      },
+      "App.Graph.XY3NodeExecutionContext": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "variables": {
+            "type": "object"
+          },
+          "parentNodeId": {
+            "type": "string"
+          },
+          "depth": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "App.Graph.XY3NodeExecutionResult": {
+        "type": "object",
+        "required": [
+          "nodeId"
+        ],
+        "properties": {
+          "nodeId": {
+            "type": "string"
+          },
+          "output": {
+            "type": "object"
+          },
+          "error": {
+            "type": "string"
+          },
+          "executionTimeMs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dateExecutedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "App.Graph.XY3NodeResolutionStats": {
+        "type": "object",
+        "required": [
+          "nodesTotal",
+          "nodesRegistered",
+          "nodesFallback",
+          "nodesNonExistant",
+          "nodesFailed"
+        ],
+        "properties": {
+          "nodesTotal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nodesRegistered": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nodesFallback": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nodesNonExistant": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nodesFailed": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "BaseTypes.HealthResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "timestamp",
+          "message"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/BaseTypes.HealthStatus"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "BaseTypes.HealthStatus": {
+        "type": "string",
+        "enum": [
+          "ok",
+          "error"
+        ]
+      }
+    }
+  },
+  "x-mint": {
+    "metadata": {
+      "title": "Orkit API",
+      "description": "Orkit Voice Agent API"
+    }
+  }
+}
